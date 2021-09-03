@@ -74,6 +74,19 @@ MAIN_CFILES  += common/bu63169af/OIS_main.c
 MAIN_CFILES  += common/bu63169af/OIS_user.c
 endif
 
+ifeq ($(CONFIG_MTK_LENS_CACTUS_DW9714AF_OFILM_SUPPORT), y)
+MAIN_CFILES += common/cactus_dw9714af_ofilm/CACTUS_DW9714AF_OFILM.c
+endif
+ifeq ($(CONFIG_MTK_LENS_CACTUS_FP5510E2AF_SUNNY_SUPPORT), y)
+MAIN_CFILES += common/cactus_fp5510e2af_sunny/CACTUS_FP5510E2AF_SUNNY.c
+endif
+ifeq ($(CONFIG_MTK_LENS_CEREUS_DW9714AF_OFILM_SUPPORT), y)
+MAIN_CFILES += common/cereus_dw9714af_ofilm/CEREUS_DW9714AF_OFILM.c
+endif
+ifeq ($(CONFIG_MTK_LENS_CEREUS_DW9714AF_SUNNY_SUPPORT), y)
+MAIN_CFILES += common/cereus_dw9714af_sunny/CEREUS_DW9714AF_SUNNY.c
+endif
+
 obj-m := mainaf.o
 mainaf-objs := $(MAIN_CFILES:.c=.o)
 
@@ -105,5 +118,10 @@ ifeq ($(CONFIG_MTK_LENS_BU63165AF_SUPPORT), y)
 else
   obj-y  += common/bu63169af/
 endif
+
+obj-$(CONFIG_MTK_LENS_CACTUS_DW9714AF_OFILM_SUPPORT) += common/cactus_dw9714af_ofilm/
+obj-$(CONFIG_MTK_LENS_CACTUS_FP5510E2AF_SUNNY_SUPPORT) += common/cactus_fp5510e2af_sunny/
+obj-$(CONFIG_MTK_LENS_CEREUS_DW9714AF_OFILM_SUPPORT) += common/cereus_dw9714af_ofilm/
+obj-$(CONFIG_MTK_LENS_CEREUS_DW9714AF_SUNNY_SUPPORT) += common/cereus_dw9714af_sunny/
 
 endif

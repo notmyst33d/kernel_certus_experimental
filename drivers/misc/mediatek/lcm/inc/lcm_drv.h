@@ -786,6 +786,8 @@ struct LCM_PARAMS {
 	unsigned int min_luminance;
 	unsigned int average_luminance;
 	unsigned int max_luminance;
+
+	int bias_voltage;
 };
 
 
