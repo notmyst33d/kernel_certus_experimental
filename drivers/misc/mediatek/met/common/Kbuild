@@ -1,5 +1,5 @@
 MET_CORE := common
-obj-m := met.o
+obj-y := met.o
 
 ifneq ($(wildcard $(MET_PLF_DIR)/feature_config/Kbuild),)
     include $(MET_PLF_DIR)/feature_config/Kbuild
@@ -243,7 +243,14 @@ ifneq ($(FEATURE_ONDIEMET), n)
 
     ifeq ($(CONFIG_MTK_TINYSYS_SSPM_SUPPORT),y)
         # for sspm_ipi.h
-        subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/sspm
+        ifneq ("$(wildcard $(MET_SSPM_INC)/sspm_ipi.h)","")
+            ccflags-y += -I$(MET_SSPM_INC)
+        else
+            $(info ======== Missing $(MET_SSPM_INC)/sspm_ipi.h ========)
+            $(info ======== disable ALL ondiemet feature ========)
+
+            SYS_SSPM_READY := n
+        endif
         subdir-ccflags-y += -I$(srctree)/drivers/misc/mediatek/sspm/$(MTK_PLATFORM)
         met-y += $(MET_CORE)/sspm/sspm_ipi_handle.o
         met-y += $(MET_CORE)/sspm/sspm_common.o

@@ -340,6 +340,7 @@ void met_arch_setup_dma_ops(struct device *dev)
 }
 EXPORT_SYMBOL(met_arch_setup_dma_ops);
 
+#ifndef MTK_MET_BUILT_IN
 int enable_met_backlight_tag(void)
 {
 	if (met_ext_api.enable_met_backlight_tag)
@@ -355,6 +356,7 @@ int output_met_backlight_tag(int level)
 	return 0;
 }
 EXPORT_SYMBOL(output_met_backlight_tag);
+#endif
 
 /* the following handle weak function in met_drv.h */
 void met_mmsys_event_gce_thread_begin(ulong thread_no, ulong task_handle,

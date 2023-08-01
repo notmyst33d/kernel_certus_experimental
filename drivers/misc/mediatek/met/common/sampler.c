@@ -11,6 +11,7 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/sched/clock.h>
 #include <linux/cpu.h>
 #include <linux/sched.h>
 #include <linux/notifier.h>
@@ -279,11 +280,10 @@ static void __met_hrtimer_stop(void *unused)
 	}
 }
 
-static int met_pmu_cpu_notify(struct notifier_block *self, unsigned long action, void *hcpu)
+static int met_pmu_cpu_notify(unsigned long action, unsigned int cpu)
 {
 	struct met_cpu_struct *met_cpu_ptr;
 	struct delayed_work *dw;
-	long cpu = (long)hcpu;
 	int preferred_polling_cpu;
 
 	if (start == 0)
@@ -391,9 +391,19 @@ static int met_pmu_cpu_notify(struct notifier_block *self, unsigned long action,
 	return NOTIFY_OK;
 }
 
-static struct notifier_block __refdata met_pmu_cpu_notifier = {
-	.notifier_call = met_pmu_cpu_notify,
-};
+static int _met_pmu_cpu_notify_online(unsigned int cpu)
+{
+	met_pmu_cpu_notify(CPU_ONLINE, cpu);
+
+	return 0;
+}
+
+static int _met_pmu_cpu_notify_offline(unsigned int cpu)
+{
+	met_pmu_cpu_notify(CPU_DOWN_PREPARE, cpu);
+
+	return 0;
+}
 
 int sampler_start(void)
 {
@@ -418,7 +428,11 @@ int sampler_start(void)
 	}
 
 	start = 0;
-	ret = register_hotcpu_notifier(&met_pmu_cpu_notifier);
+	// ret = register_hotcpu_notifier(&met_pmu_cpu_notifier);
+	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
+						   "met:online",
+						   _met_pmu_cpu_notify_online,
+						   _met_pmu_cpu_notify_offline);
 
 	list_for_each_entry(c, &met_list, list) {
 
@@ -489,7 +503,8 @@ void sampler_stop(void)
 	start = 0;
 	put_online_cpus();
 
-	unregister_hotcpu_notifier(&met_pmu_cpu_notifier);
+	// unregister_hotcpu_notifier(&met_pmu_cpu_notifier);
+    cpuhp_remove_state_nocalls(CPUHP_AP_ONLINE_DYN);
 
 	list_for_each_entry(c, &met_list, list) {
 		if (c->ondiemet_mode == 0) {

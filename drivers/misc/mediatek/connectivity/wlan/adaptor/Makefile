@@ -39,7 +39,7 @@ ifeq ($(CONFIG_WLAN_DRV_BUILD_IN),y)
 $(info $(MODULE_NAME) build-in boot.img)
 obj-y += $(MODULE_NAME).o
 else
-obj-m += $(MODULE_NAME).o
+obj-y += $(MODULE_NAME).o
 endif
 
 # Wi-Fi character device driver

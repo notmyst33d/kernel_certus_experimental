@@ -1288,6 +1288,19 @@ void ccu_get_sensor_i2c_slave_addr(int32_t *sensorI2cSlaveAddr)
 		g_ccu_sensor_info[IMGSENSOR_SENSOR_IDX_MAIN3].slave_addr;
 }
 
+void ccu_get_sensor_i2c_info(struct ccu_sensor_info *sensor_info)
+{
+	int32_t i;
+
+	for (i = IMGSENSOR_SENSOR_IDX_MIN_NUM;
+		i < IMGSENSOR_SENSOR_IDX_MAX_NUM; ++i) {
+		sensor_info[i].slave_addr =
+		g_ccu_sensor_info[i].slave_addr;
+		sensor_info[i].i2c_id =
+		g_ccu_sensor_info[i].i2c_id;
+	}
+}
+
 void ccu_get_sensor_name(char **sensor_name)
 {
 	sensor_name[0] =

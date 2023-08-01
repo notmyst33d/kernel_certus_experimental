@@ -3,6 +3,8 @@
  * Copyright (c) 2019 MediaTek Inc.
  */
 
+#include <linux/sched/clock.h>
+
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/sched.h>

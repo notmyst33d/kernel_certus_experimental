@@ -1,4 +1,4 @@
-obj-m := met.o
+obj-y := met.o
 
 ccflags-y += -I$(srctree)/include/
 
