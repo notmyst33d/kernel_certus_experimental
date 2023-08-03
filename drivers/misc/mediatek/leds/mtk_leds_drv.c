@@ -67,11 +67,8 @@ static bool pmic_chrind_en = true;
  * DEBUG MACROS
  ***************************************************************************/
 static int debug_enable_led = 1;
-#define LEDS_DRV_DEBUG(format, args...) do { \
-	if (debug_enable_led) {	\
-		pr_debug("[LED]"format, ##args);\
-	} \
-} while (0)
+#define LEDS_DRV_DEBUG(format, args...) \
+	pr_info("[LED]"format, ##args)
 
 /******************************************************************************
  * for DISP backlight High resolution

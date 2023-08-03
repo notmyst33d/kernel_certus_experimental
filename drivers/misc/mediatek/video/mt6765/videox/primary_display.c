@@ -11,6 +11,8 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/nkro.h>
+
 #include <linux/delay.h>
 #include <linux/sched.h>
 #include <linux/semaphore.h>
@@ -3781,6 +3783,10 @@ int primary_display_init(char *lcm_name, unsigned int lcm_fps,
 	struct ddp_io_golden_setting_arg gset_arg;
 	int i = 0;
 
+    NKRO_LOG("Using LCM: %s\n", lcm_name);
+    NKRO_DUMP();
+    // NKRO_PANIC();
+
 	DISPCHECK("primary_display_init begin lcm=%s, inited=%d\n",
 		lcm_name, is_lcm_inited);
 
@@ -4625,9 +4631,15 @@ int suspend_to_full_roi(void)
 	return ret;
 }
 
+extern char *mtkfb_find_lcm_driver(void);
+
 int primary_display_suspend(void)
 {
 	enum DISP_STATUS ret = DISP_STATUS_OK;
+
+    NKRO_LOG("Display suspend\n");
+    NKRO_DUMP();
+    nkro_dump_lcm();
 
 	DISPCHECK("%s begin\n", __func__);
 	mmprofile_log_ex(ddp_mmp_get_events()->primary_suspend,
@@ -8033,6 +8045,10 @@ int primary_display_setbacklight_nolock(unsigned int level)
 {
 	static unsigned int last_level;
 
+    NKRO_LOG("Display brightness: %d\n", level);
+    NKRO_DUMP();
+    nkro_dump_lcm();
+
 	DISPFUNC();
 	if (disp_helper_get_stage() != DISP_HELPER_STAGE_NORMAL) {
 		DISPMSG("%s skip due to stage %s\n", __func__,
@@ -9680,4 +9696,27 @@ int primary_display_set_scenario(int scenario)
 	}
 
 	return ret;
+}
+
+void nkro_dump_lcm(void) {
+    char *nkro_lcm_name;
+
+    if (pgc->plcm != NULL) {
+        NKRO_LOG("We have an LCM driver\n", pgc->plcm);
+        NKRO_LOG("pgc->plcm->is_inited: %d\n", pgc->plcm->is_inited);
+        if (pgc->plcm->drv->name != NULL) {
+            NKRO_LOG("pgc->plcm->drv->name: %s\n", pgc->plcm->drv->name);
+        } else {
+            NKRO_LOG("pgc->plcm->drv->name is NULL\n");
+        }
+    } else {
+        NKRO_LOG("pgc->plcm is NULL\n");
+    }
+
+    nkro_lcm_name = mtkfb_find_lcm_driver();
+    if (nkro_lcm_name != NULL) {
+        NKRO_LOG("LCM is %s\n", nkro_lcm_name);
+    } else {
+        NKRO_LOG("Cant determine the LCM name(nkro_lcm_name is NULL)\n");
+    }
 }

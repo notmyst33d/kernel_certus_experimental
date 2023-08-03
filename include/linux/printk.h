@@ -92,11 +92,13 @@ static inline const char *printk_skip_headers(const char *buffer)
 #define CONSOLE_LOGLEVEL_DEFAULT CONFIG_CONSOLE_LOGLEVEL_DEFAULT
 
 extern int console_printk[];
+extern int console_printk_fake[];
 
 #define console_loglevel (console_printk[0])
 #define default_message_loglevel (console_printk[1])
 #define minimum_console_loglevel (console_printk[2])
 #define default_console_loglevel (console_printk[3])
+#define console_loglevel_fake (console_printk_fake[0])
 
 static inline void console_silent(void)
 {

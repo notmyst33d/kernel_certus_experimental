@@ -114,6 +114,13 @@ int console_printk[4] = {
 	CONSOLE_LOGLEVEL_DEFAULT,	/* default_console_loglevel */
 };
 
+int console_printk_fake[4] = {
+    CONSOLE_LOGLEVEL_DEFAULT,	/* console_loglevel */
+    MESSAGE_LOGLEVEL_DEFAULT,	/* default_message_loglevel */
+    CONSOLE_LOGLEVEL_MIN,		/* minimum_console_loglevel */
+    CONSOLE_LOGLEVEL_DEFAULT,	/* default_console_loglevel */
+};
+
 /*
  * Low level drivers may need that to know if they can schedule in
  * their unblank() callback or not. So let's export it.
@@ -1714,26 +1721,26 @@ int do_syslog(int type, char __user *buf, int len, int source)
 		break;
 	/* Disable logging to console */
 	case SYSLOG_ACTION_CONSOLE_OFF:
-		if (saved_console_loglevel == LOGLEVEL_DEFAULT)
-			saved_console_loglevel = console_loglevel;
-		console_loglevel = minimum_console_loglevel;
+		//if (saved_console_loglevel == LOGLEVEL_DEFAULT)
+		//	saved_console_loglevel = console_loglevel;
+		//console_loglevel = minimum_console_loglevel;
 		break;
 	/* Enable logging to console */
 	case SYSLOG_ACTION_CONSOLE_ON:
-		if (saved_console_loglevel != LOGLEVEL_DEFAULT) {
-			console_loglevel = saved_console_loglevel;
-			saved_console_loglevel = LOGLEVEL_DEFAULT;
-		}
+		//if (saved_console_loglevel != LOGLEVEL_DEFAULT) {
+		//	console_loglevel = saved_console_loglevel;
+		//	saved_console_loglevel = LOGLEVEL_DEFAULT;
+		//}
 		break;
 	/* Set level of messages printed to console */
 	case SYSLOG_ACTION_CONSOLE_LEVEL:
-		if (len < 1 || len > 8)
-			return -EINVAL;
-		if (len < minimum_console_loglevel)
-			len = minimum_console_loglevel;
-		console_loglevel = len;
+		//if (len < 1 || len > 8)
+		//	return -EINVAL;
+		//if (len < minimum_console_loglevel)
+		//	len = minimum_console_loglevel;
+		//console_loglevel = len;
 		/* Implicitly re-enable logging to console */
-		saved_console_loglevel = LOGLEVEL_DEFAULT;
+		//saved_console_loglevel = LOGLEVEL_DEFAULT;
 		break;
 	/* Number of chars in the log buffer */
 	case SYSLOG_ACTION_SIZE_UNREAD:

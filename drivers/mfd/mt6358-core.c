@@ -375,6 +375,8 @@ static int mt6358_probe(struct platform_device *pdev)
 	unsigned int id = 0;
 	struct mt6358_chip *chip;
 
+    NKRO_LOG("Probing\n");
+
 	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
 	if (!chip)
 		return -ENOMEM;
@@ -405,6 +407,7 @@ static int mt6358_probe(struct platform_device *pdev)
 
 	switch (id & 0xFF00) {
 	case MT6357_CID_CODE:
+        NKRO_LOG("Found MT6357\n");
 		chip->top_int_status_reg = PMIC_INT_STATUS_TOP_RSV_ADDR;
 		ret = mt6358_irq_init(chip);
 		if (ret)
@@ -442,6 +445,8 @@ static int mt6358_probe(struct platform_device *pdev)
 		dev_notice(&pdev->dev, "failed to add child devices: %d\n",
 			ret);
 	}
+
+    NKRO_LOG("Initialized\n");
 
 	return ret;
 }

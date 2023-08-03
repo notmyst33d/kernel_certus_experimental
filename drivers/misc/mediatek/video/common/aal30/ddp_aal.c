@@ -112,11 +112,9 @@
 /* # echo aal_dbg:1 > /sys/kernel/debug/dispsys */
 int aal_dbg_en;
 
-#define AAL_ERR(fmt, arg...) pr_notice("[AAL] %s: " fmt "\n", __func__, ##arg)
-#define AAL_NOTICE(fmt, arg...) pr_info("[AAL] %s: " fmt "\n", __func__, ##arg)
-#define AAL_DBG(fmt, arg...) \
-	do { if (aal_dbg_en) pr_debug("[AAL] %s: " fmt "\n", __func__, ##arg); \
-		} while (0)
+#define AAL_ERR(fmt, arg...) pr_info("[AAL][ERR] %s: " fmt "\n", __func__, ##arg)
+#define AAL_NOTICE(fmt, arg...) pr_info("[AAL][NOTICE] %s: " fmt "\n", __func__, ##arg)
+#define AAL_DBG(fmt, arg...) pr_info("[AAL][DBG] %s: " fmt "\n", __func__, ##arg)
 
 static int disp_aal_write_init_regs(enum DISP_MODULE_ENUM module, void *cmdq);
 static int disp_aal_write_param_to_reg(enum DISP_MODULE_ENUM module,

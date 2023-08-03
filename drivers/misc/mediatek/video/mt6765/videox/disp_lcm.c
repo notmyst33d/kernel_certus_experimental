@@ -12,6 +12,8 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/nkro.h>
+
 #include <linux/slab.h>
 
 #include <linux/types.h>
@@ -1520,6 +1522,7 @@ int disp_lcm_set_backlight(struct disp_lcm_handle *plcm,
 	}
 
 	lcm_drv = plcm->drv;
+    NKRO_LOG("set_backlight_cmdq: %pF\n", lcm_drv->set_backlight_cmdq);
 	if (lcm_drv->set_backlight_cmdq) {
 		lcm_drv->set_backlight_cmdq(handle, level);
 	} else {

@@ -11,6 +11,8 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/nkro.h>
+
 #include <generated/autoconf.h>
 #include <linux/module.h>
 #include <linux/mm.h>
@@ -112,36 +114,22 @@ long dts_gpio_state;
 #define DISP_CHANGED_UI_LAYER_ID (DDP_OVL_LAYER_MUN-2)
 #define NOT_REFERENCED(x)   { (x) = (x); }
 #ifdef CONFIG_MTK_AEE_FEATURE
-#define CHECK_RET(expr)    \
-do {                   \
-	int ret = (expr);  \
-	aee_kernel_exception("mtkfb", "[DISP]error:%s,%d", \
-	 __FILE__, __LINE__);  \
-} while (0)
+#define CHECK_RET(expr) \
+	pr_info("[mtkfb][DISP]error:%s,%d", __FILE__, __LINE__)
 #else
 #define CHECK_RET(expr)
 #endif
 #define MTKFB_LOG(fmt, arg...) \
-	do { \
-		if (mtkfb_log_on) \
-			DISP_LOG_PRINT(ANDROID_LOG_WARN, "MTKFB", fmt, ##arg); \
-	} while (0)
+	pr_info("[MTKFB] "fmt, ##arg)
 /* always show this debug info while the global debug log is off */
 #define MTKFB_LOG_DBG(fmt, arg...) \
-	do { \
-		if (!mtkfb_log_on) \
-			DISP_LOG_PRINT(ANDROID_LOG_WARN, "MTKFB", fmt, ##arg); \
-	} while (0)
+	pr_info("[MTKFB] "fmt, ##arg)
 
-#define MTKFB_FUNC()	\
-	do { \
-		if (mtkfb_log_on) \
-			DISP_LOG_PRINT(ANDROID_LOG_INFO, "MTKFB", \
-				"[Func]%s\n", __func__); \
-	} while (0)
+#define MTKFB_FUNC() \
+	pr_info("[MTKFB][Func]%s\n", __func__)
 
 #define PRNERR(fmt, args...) \
-	DISP_LOG_PRINT(ANDROID_LOG_INFO, "MTKFB", fmt, ## args)
+	pr_info("[MTKFB] "fmt, ##args)
 
 /* ------------------------------------------------------------------------- */
 /* local variables */
@@ -309,6 +297,11 @@ static int mtkfb_blank(int blank_mode, struct fb_info *info)
 int mtkfb_set_backlight_level(unsigned int level)
 {
 	bool aal_is_support = disp_aal_is_support();
+
+    NKRO_LOG("Display brightness: %d\n", level);
+    NKRO_DUMP();
+    nkro_dump_lcm();
+
 	MTKFB_FUNC();
 	DISPDBG("mtkfb_set_backlight_level:%d Start\n",
 		level);

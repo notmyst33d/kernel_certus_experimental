@@ -106,12 +106,9 @@ struct cust_mt65xx_led *pled_dtsi;
 /****************************************************************************
  * DEBUG MACROS
  ***************************************************************************/
-static int debug_enable_led_hal = 1;
-#define LEDS_DEBUG(format, args...) do { \
-	if (debug_enable_led_hal) {	\
-		pr_debug("[LED]"format, ##args);\
-	} \
-} while (0)
+//static int debug_enable_led_hal = 1;
+#define LEDS_DEBUG(format, args...) \
+	pr_info("[LED]"format, ##args)
 
 /*****************PWM *************************************************/
 #define PWM_DIV_NUM 8

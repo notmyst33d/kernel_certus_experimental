@@ -12,6 +12,8 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/nkro.h>
+
 #ifdef BUILD_LK
 #include <platform/mt_gpio.h>
 #elif defined(BUILD_UBOOT)
@@ -91,17 +93,26 @@ static struct LCM_setting_table bl_level[] = {
 static void push_table(void *cmdq, struct LCM_setting_table *table, unsigned int count, unsigned char force_update)
 {
 	unsigned int i;
+
+    NKRO_LOG("Debug\n");
+    NKRO_LOG("Command count: %d\n", count);
+
 	for (i = 0; i < count; i++) {
 		unsigned int cmd;
 
 		cmd = table[i].cmd;
+        NKRO_LOG("Command: %d\n", cmd);
 		switch (cmd) {
 			case REGFLAG_DELAY:
+                NKRO_LOG("Delay %d ms\n", table[i].count);
 				MDELAY(table[i].count);
 				break;
 			case REGFLAG_END_OF_TABLE:
+                NKRO_LOG("End of table\n");
 				break;
 			default:
+                NKRO_LOG("Command send\n");
+                NKRO_LOG("dsi_set_cmdq_V22: %pF\n", lcm_util.dsi_set_cmdq_V22);
 				lcm_util.dsi_set_cmdq_V22(cmdq, cmd, table[i].count, table[i].para_list, force_update);
 				break;
 		}
@@ -110,6 +121,7 @@ static void push_table(void *cmdq, struct LCM_setting_table *table, unsigned int
 
 static void lcm_set_util_funcs(const struct LCM_UTIL_FUNCS *util)
 {
+    NKRO_LOG("Got utils\n");
 	memcpy(&lcm_util, util, sizeof(struct LCM_UTIL_FUNCS));
 }
 
@@ -283,7 +295,7 @@ static unsigned int lcm_compare_id(void)
 	read_reg_v2(1, buffer, 1);
 	version_id = buffer[0];
 
-	pr_debug("[%s] ebbg_ili9881c id: 0x%08x, version_id: 0x%x\n", __func__, id, version_id);
+	pr_info("[%s] ebbg_ili9881c id: 0x%08x, version_id: 0x%x\n", __func__, id, version_id);
 	push_table(NULL, switch_table_page0, sizeof(switch_table_page0) / sizeof(struct LCM_setting_table), 1);
 
 	if (id == 0x98 && version_id == 0x81) {
@@ -295,7 +307,10 @@ static unsigned int lcm_compare_id(void)
 
 static void lcm_setbacklight_cmdq(void *handle, unsigned int level)
 {
-	pr_debug("[%s] ebbg_ili9881c backlight level: %d\n", __func__, level);
+    NKRO_LOG("Display brightness: %d\b", level);
+    NKRO_DUMP();
+
+	pr_info("[%s] ebbg_ili9881c backlight level: %d\n", __func__, level);
 
 	// from 12 bits to 8 bits
 	bl_level[1].para_list[0] = (level & 0xF0) >> 4;
@@ -316,7 +331,7 @@ static unsigned int lcm_esd_check(void)
 	dsi_set_cmdq(array, 1, 1);
 
 	read_reg_v2(0x0A, buffer, 1);
-	pr_debug("[%s] ebbg_ili9881c 0x0A: 0x%02x\n", __func__, buffer[0]);
+	pr_info("[%s] ebbg_ili9881c 0x0A: 0x%02x\n", __func__, buffer[0]);
 
 	if (buffer[0] != 0x9C) {
 		return 1;
@@ -338,7 +353,7 @@ static unsigned int lcm_esd_recover(void)
 	SET_RESET_PIN(1);
 	MDELAY(120);
 
-	pr_debug("[%s] ebbg_ili9881c lcm dsi mode: %d\n", __func__, lcm_dsi_mode);
+	pr_info("[%s] ebbg_ili9881c lcm dsi mode: %d\n", __func__, lcm_dsi_mode);
 	if (lcm_dsi_mode == CMD_MODE) {
 		push_table(NULL, init_setting_cmd, sizeof(init_setting_cmd) / sizeof(struct LCM_setting_table), 1);
 	} else {
@@ -383,7 +398,7 @@ static unsigned int lcm_ata_check(unsigned char *buffer)
 	dsi_set_cmdq(data_array, 1, 1);
 
 	read_reg_v2(0x55, read_buf, 1);
-	pr_debug("[%s] ebbg_ili9881c ata check x0_MSB = 0x%x, read_buf: 0x%x\n", __func__, x0_MSB, read_buf[0]);
+	pr_info("[%s] ebbg_ili9881c ata check x0_MSB = 0x%x, read_buf: 0x%x\n", __func__, x0_MSB, read_buf[0]);
 
 	push_table(NULL, switch_table_page0, sizeof(switch_table_page0) / sizeof(struct LCM_setting_table), 1);
 	if (read_buf[0] == x0_MSB) {
