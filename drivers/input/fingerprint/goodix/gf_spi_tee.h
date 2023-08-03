@@ -6,8 +6,21 @@
 #ifndef __GF_SPI_TEE_H
 #define __GF_SPI_TEE_H
 
+#include <linux/types.h>
+#include <linux/netlink.h>
 #include <linux/cdev.h>
 #include <linux/input.h>
+#ifndef CONFIG_SPI_MT65XX
+#include "mtk_spi.h"
+#endif
+#ifdef CONFIG_MTK_MT6306_GPIO_SUPPORT
+#include <mach/mtk_6306_gpio.h>
+#endif
+#ifdef CONFIG_HAS_EARLYSUSPEND
+#include <linux/earlysuspend.h>
+#else
+#include <linux/notifier.h>
+#endif
 
 /**************************debug******************************/
 #define ERR_LOG  (0)

@@ -7,12 +7,51 @@
  * as published by the Free Software Foundation.
  */
 
-#include <net/sock.h>
+#include <linux/slab.h>
+#include <linux/device.h>
+#include <linux/input.h>
+#include <linux/mutex.h>
+#include <linux/io.h>
+#include <linux/gpio.h>
 #include <linux/fb.h>
+//new added
+#include <linux/interrupt.h>
+#include <linux/module.h>
+#include <linux/moduleparam.h>
+
+#include <linux/pm_wakeup.h>
+#ifdef CONFIG_HAS_EARLYSUSPEND
+#include <linux/earlysuspend.h>
+#else
+#include <linux/notifier.h>
+#endif
+
+#ifdef CONFIG_OF
+#include <linux/of.h>
 #include <linux/of_irq.h>
-#include <linux/spi/spi.h>
 #include <linux/of_platform.h>
+#endif
+
+#ifdef CONFIG_COMPAT
+#include <linux/compat.h>
+#endif
+
+#ifdef CONFIG_MTK_CLKMGR
+#include "mach/mt_clkmgr.h"
+#else
+#include <linux/clk.h>
+#endif
+
+#include <net/sock.h>
+#include <linux/spi/spi.h>
+#include <linux/spi/spidev.h>
 #include <linux/regulator/consumer.h>
+
+/* MTK header */
+#ifndef CONFIG_SPI_MT65XX
+#include "mtk_spi.h"
+#include "mtk_spi_hal.h"
+#endif
 
 #include "teei_fp.h"
 #include "tee_client_api.h"
