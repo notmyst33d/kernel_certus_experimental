@@ -43,6 +43,7 @@
 #endif
 //#include <linux/wakelock.h>
 #include "focaltech_core.h"
+#include <uapi/linux/sched/types.h>
 
 /*****************************************************************************
 * Private constant and macro definitions using #define
