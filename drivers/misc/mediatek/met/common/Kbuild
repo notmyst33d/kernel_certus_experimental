@@ -1,5 +1,5 @@
 MET_CORE := common
-obj-m := met.o
+obj-y := met.o
 
 ifneq ($(wildcard $(MET_PLF_DIR)/feature_config/Kbuild),)
     include $(MET_PLF_DIR)/feature_config/Kbuild
