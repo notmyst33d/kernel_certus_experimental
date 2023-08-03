@@ -11,6 +11,8 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/nkro.h>
+
 #define LOG_TAG "DSI"
 
 #include <linux/delay.h>
@@ -4055,6 +4057,7 @@ void DSI_set_cmdq_V11_wrapper_DSI1(void *cmdq, unsigned int *pdata,
 void DSI_set_cmdq_V2_DSI0(void *cmdq, unsigned int cmd, unsigned char count,
 	unsigned char *para_list, unsigned char force_update)
 {
+    NKRO_LOG("Debug\n");
 	DSI_set_cmdq_V2(DISP_MODULE_DSI0, cmdq, cmd, count, para_list,
 		force_update);
 }
@@ -4062,6 +4065,7 @@ void DSI_set_cmdq_V2_DSI0(void *cmdq, unsigned int cmd, unsigned char count,
 void DSI_set_cmdq_V2_DSI1(void *cmdq, unsigned int cmd, unsigned char count,
 	unsigned char *para_list, unsigned char force_update)
 {
+    NKRO_LOG("Debug\n");
 	DSI_set_cmdq_V2(DISP_MODULE_DSI1, cmdq, cmd, count, para_list,
 		force_update);
 }
@@ -4069,6 +4073,7 @@ void DSI_set_cmdq_V2_DSI1(void *cmdq, unsigned int cmd, unsigned char count,
 void DSI_set_cmdq_V2_DSIDual(void *cmdq, unsigned int cmd, unsigned char count,
 	unsigned char *para_list, unsigned char force_update)
 {
+    NKRO_LOG("Debug\n");
 	DSI_set_cmdq_V2(DISP_MODULE_DSIDUAL, cmdq, cmd, count, para_list,
 		force_update);
 }
@@ -4206,16 +4211,21 @@ int ddp_dsi_set_lcm_utils(enum DISP_MODULE_ENUM module,
 {
 	struct LCM_UTIL_FUNCS *utils = NULL;
 
+    NKRO_LOG("Debug\n");
+
 	if (lcm_drv == NULL) {
 		DISPERR("lcm_drv is null\n");
 		return -1;
 	}
 
 	if (module == DISP_MODULE_DSI0) {
+        NKRO_LOG("Module utils is DSI0\n");
 		utils = (struct LCM_UTIL_FUNCS *)&lcm_utils_dsi0;
 	} else if (module == DISP_MODULE_DSI1) {
+        NKRO_LOG("Module utils is DSI1\n");
 		utils = (struct LCM_UTIL_FUNCS *)&lcm_utils_dsi1;
 	} else if (module == DISP_MODULE_DSIDUAL) {
+        NKRO_LOG("Module utils is dual DSI\n");
 		utils = (struct LCM_UTIL_FUNCS *)&lcm_utils_dsidual;
 	} else {
 		DISPWARN("wrong module: %d\n", module);
@@ -4227,6 +4237,7 @@ int ddp_dsi_set_lcm_utils(enum DISP_MODULE_ENUM module,
 	utils->mdelay = lcm_mdelay;
 	utils->set_te_pin = NULL;
 	if (module == DISP_MODULE_DSI0) {
+        NKRO_LOG("Module functions is DSI0\n");
 		utils->dsi_set_cmdq =
 			DSI_set_cmdq_wrapper_DSI0;
 		utils->dsi_set_cmdq_V2 =
@@ -4246,6 +4257,7 @@ int ddp_dsi_set_lcm_utils(enum DISP_MODULE_ENUM module,
 		utils->mipi_dsi_cmds_rx =
 			DSI_dcs_read_lcm_reg_v3_wrapper_DSI0;
 	} else if (module == DISP_MODULE_DSI1) {
+        NKRO_LOG("Module functions is DSI1\n");
 		utils->set_reset_pin =
 			lcm1_set_reset_pin;
 		utils->set_te_pin =
@@ -4274,6 +4286,7 @@ int ddp_dsi_set_lcm_utils(enum DISP_MODULE_ENUM module,
 		lcm_drv->get_params(&lcm_param);
 
 		if (lcm_param.lcm_cmd_if == LCM_INTERFACE_DSI0) {
+            NKRO_LOG("Module functions is dual DSI0\n");
 			utils->dsi_set_cmdq =
 				DSI_set_cmdq_wrapper_DSI0;
 			utils->dsi_set_cmdq_V2 =
@@ -4291,6 +4304,7 @@ int ddp_dsi_set_lcm_utils(enum DISP_MODULE_ENUM module,
 			utils->mipi_dsi_cmds_rx =
 				DSI_dcs_read_lcm_reg_v3_wrapper_DSI0;
 		} else if (lcm_param.lcm_cmd_if == LCM_INTERFACE_DSI1) {
+            NKRO_LOG("Module functions is dual DSI1\n");
 			utils->dsi_set_cmdq =
 				DSI_set_cmdq_wrapper_DSI1;
 			utils->dsi_set_cmdq_V2 =
@@ -4308,6 +4322,7 @@ int ddp_dsi_set_lcm_utils(enum DISP_MODULE_ENUM module,
 			utils->mipi_dsi_cmds_rx =
 				DSI_dcs_read_lcm_reg_v3_wrapper_DSI1;
 		} else {
+            NKRO_LOG("Module functions is dual unknown\n");
 			utils->dsi_set_cmdq =
 				DSI_set_cmdq_wrapper_DSIDual;
 			utils->dsi_set_cmdq_V2 =
@@ -4335,8 +4350,10 @@ int ddp_dsi_set_lcm_utils(enum DISP_MODULE_ENUM module,
 #endif
 #endif
 
+    NKRO_LOG("dsi_set_cmdq_V22=%pF\n", utils->dsi_set_cmdq_V22);
 	lcm_drv->set_util_funcs(utils);
 
+    NKRO_LOG("Utils setup done\n");
 	return 0;
 }
 

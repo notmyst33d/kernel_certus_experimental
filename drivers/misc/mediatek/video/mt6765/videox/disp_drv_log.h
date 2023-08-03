@@ -20,62 +20,38 @@
 #include "mt-plat/aee.h"
 #endif
 
-#define DISP_LOG_PRINT(level, sub_module, fmt, args...)			\
+#define DISP_LOG_PRINT(level, sub_module, fmt, args...) \
 	dprec_logger_pr(DPREC_LOGGER_DEBUG, fmt, ##args)
 
-#define DISPINFO(string, args...)					\
-	do {								\
-		dprec_logger_pr(DPREC_LOGGER_DEBUG, string, ##args);	\
-		if (g_mobilelog) \
-			pr_debug("[DISP]"string, ##args);		\
-	} while (0)
+#define DISPINFO(string, args...) \
+	pr_info("[DISP][%s #%d]info:"string, \
+		__FILE__, __LINE__, ##args)
 
-#define DISPMSG(string, args...)					\
-	do {								\
-		dprec_logger_pr(DPREC_LOGGER_DEBUG, string, ##args);	\
-		pr_debug("[DISP]"string, ##args);		\
-	} while (0)
+#define DISPMSG(string, args...) \
+	pr_info("[DISP][%s #%d]msg:"string, \
+		__FILE__, __LINE__, ##args)
 
-#define DISPCHECK(string, args...)					\
-	do {								\
-		dprec_logger_pr(DPREC_LOGGER_DEBUG, string, ##args);	\
-		pr_debug("[DISP]"string, ##args);		\
-	} while (0)
+#define DISPCHECK(string, args...) \
+	pr_info("[DISP][%s #%d]check:"string, \
+		__FILE__, __LINE__, ##args)
 
-#define DISPWARN(string, args...)					\
-	do {								\
-		dprec_logger_pr(DPREC_LOGGER_ERROR, string, ##args);	\
-		pr_info("[DISP][%s #%d]warn:"string,			\
-				__func__, __LINE__, ##args); \
-	} while (0)
+#define DISPWARN(string, args...) \
+	pr_info("[DISP][%s #%d]warn:"string, \
+		__FILE__, __LINE__, ##args)
 
-#define DISPERR(string, args...)					\
-	do {								\
-		dprec_logger_pr(DPREC_LOGGER_ERROR, string, ##args);	\
-		pr_info("[DISP][%s #%d]ERROR:"string,			\
-				__func__, __LINE__, ##args);		\
-	} while (0)
+#define DISPERR(string, args...) \
+	pr_info("[DISP][%s #%d]ERROR:"string, \
+		__FILE__, __LINE__, ##args)
 
-#define DISPPR_FENCE(string, args...)					\
-	do {								\
-		dprec_logger_pr(DPREC_LOGGER_FENCE, string, ##args);	\
-		if (g_mobilelog)					\
-			pr_info("fence/"string, ##args);		\
-	} while (0)
+#define DISPPR_FENCE(string, args...) \
+    pr_info("[DISP][%s #%d]fence:"string, \
+		__FILE__, __LINE__, ##args)
 
-#define DISPDBG(string, args...)					\
-	do {								\
-		if (ddp_debug_dbg_log_level()) {			\
-			DISPMSG(string, ##args);			\
-		}							\
-	} while (0)
+#define DISPDBG(string, args...) \
+	DISPMSG(string, ##args)
 
-#define DISPFUNC()							\
-	do {								\
-		dprec_logger_pr(DPREC_LOGGER_DEBUG, "func|%s\n", __func__); \
-		if (g_mobilelog)					\
-			pr_info("[DISP]func|%s\n", __func__);		\
-	} while (0)
+#define DISPFUNC() \
+	pr_info("[DISP]func|%s|%s|%d\n", __func__, __FILE__, __LINE__)
 
 #define DISPDBGFUNC() DISPFUNC()
 
