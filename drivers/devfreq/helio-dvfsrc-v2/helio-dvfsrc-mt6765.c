@@ -274,7 +274,8 @@ static struct notifier_block dvfsrc_fb_notifier = {
 static int is_efuse_bypass_flavor(void)
 {
 	int r = 0;
-#if defined(CONFIG_ARM64)
+#if defined(CONFIG_ARM64) && \
+		defined(CONFIG_BUILD_ARM64_DTB_OVERLAY_IMAGE_NAMES)
 	int len;
 
 	len = sizeof(CONFIG_BUILD_ARM64_DTB_OVERLAY_IMAGE_NAMES);
