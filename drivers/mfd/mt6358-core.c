@@ -11,6 +11,8 @@
  * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
  */
 
+#include <linux/nkro.h>
+
 #include <linux/interrupt.h>
 #include <linux/mfd/core.h>
 #include <linux/module.h>
