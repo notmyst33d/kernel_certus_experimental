@@ -24,7 +24,7 @@
 #include <linux/time.h>
 #include <linux/irqnr.h>
 #include <linux/vmalloc.h>
-#include <asm/cputime.h>
+/* #include <asm/cputime.h> */
 /* #include <asm-generic/cputime.h> */
 #include <linux/tick.h>
 /* #include <linux/jiffies.h> */
@@ -122,16 +122,16 @@ static unsigned int stat_os_polling(u64 *value, int i)
 	int j = -1;
 
 	/* Copy values here to work around gcc-2.95.3, gcc-2.96 */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_USER]);	/* user */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_NICE]);	/* nice */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM]);	/* system */
-	value[++j] = cputime64_to_clock_t(get_idle_time(i));	/* idle */
-	value[++j] = cputime64_to_clock_t(get_iowait_time(i));	/* iowait */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_IRQ]);	/* irq */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]);	/* softirq */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_STEAL]);	/* steal */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_GUEST]);	/* guest */
-	value[++j] = cputime64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE]);	/* guest_nice */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_USER]);	/* user */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_NICE]);	/* nice */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM]);	/* system */
+	value[++j] = jiffies_64_to_clock_t(get_idle_time(i));	/* idle */
+	value[++j] = jiffies_64_to_clock_t(get_iowait_time(i));	/* iowait */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_IRQ]);	/* irq */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ]);	/* softirq */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_STEAL]);	/* steal */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_GUEST]);	/* guest */
+	value[++j] = jiffies_64_to_clock_t(kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE]);	/* guest_nice */
 
 	return j + 1;
 }

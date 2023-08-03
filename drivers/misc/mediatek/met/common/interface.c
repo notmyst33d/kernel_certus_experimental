@@ -11,6 +11,7 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/sched/clock.h>
 #include <linux/fs.h>
 #include <linux/sched.h>
 #include <linux/module.h>
