@@ -81,7 +81,8 @@
 #include <mtk_battery_table.h>
 #include "simulator_kernel.h"
 #endif
-
+#include <linux/iio/consumer.h>
+#include <linux/of_platform.h> /*of_find_node_by_name*/
 
 
 /* ============================================================ */
