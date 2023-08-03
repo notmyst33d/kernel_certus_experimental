@@ -93,7 +93,7 @@ static int get_vir_memstat(unsigned int *value)
 	int i, cnt = 0;
 
 	for (i = 0; i < NR_VM_ZONE_STAT_ITEMS; i++)
-		vm_status[i] = global_page_state(i);
+		vm_status[i] = global_zone_page_state(i);
 
 	all_vm_events(vm_status + NR_VM_ZONE_STAT_ITEMS);
 
