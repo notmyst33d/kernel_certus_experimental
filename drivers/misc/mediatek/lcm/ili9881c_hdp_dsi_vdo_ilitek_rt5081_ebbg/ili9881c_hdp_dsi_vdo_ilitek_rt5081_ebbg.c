@@ -12,6 +12,8 @@
  * GNU General Public License for more details.
  */
 
+#include <linux/nkro.h>
+
 #ifdef BUILD_LK
 #include <platform/mt_gpio.h>
 #elif defined(BUILD_UBOOT)
@@ -170,6 +172,10 @@ static void lcm_get_params(struct LCM_PARAMS *params)
 
 static void lcm_init_power(void)
 {
+    nkro_log_toggle();
+    NKRO_LOG("lcm_init_power\n");
+    NKRO_DUMP();
+    nkro_log_toggle();
 #ifdef BUILD_LK
 	mt_set_gpio_mode(GPIO2_LCM_1V8_EN, GPIO_MODE_00);
 	mt_set_gpio_dir(GPIO2_LCM_1V8_EN, GPIO_DIR_OUT);
@@ -194,6 +200,10 @@ static void lcm_init_power(void)
 
 static void lcm_suspend_power(void)
 {
+    nkro_log_toggle();
+    NKRO_LOG("lcm_suspend_power\n");
+    NKRO_DUMP();
+    nkro_log_toggle();
 #ifdef BUILD_LK
 	mt_set_gpio_out(GPIO2_LCM_1V8_EN, GPIO_OUT_ZERO);
 	MDELAY(2);
@@ -211,12 +221,20 @@ static void lcm_suspend_power(void)
 
 static void lcm_resume_power(void)
 {
+    nkro_log_toggle();
+    NKRO_LOG("lcm_resume_power\n");
+    NKRO_DUMP();
+    nkro_log_toggle();
 	display_bias_enable();
 	MDELAY(15);
 }
 
 static void lcm_init(void)
 {
+    nkro_log_toggle();
+    NKRO_LOG("lcm_init\n");
+    NKRO_DUMP();
+    nkro_log_toggle();
 #ifdef BUILD_LK
 	mt_set_gpio_mode(GPIO45_LCM_RESET, GPIO_MODE_00);
 	mt_set_gpio_dir(GPIO45_LCM_RESET, GPIO_DIR_OUT);
@@ -248,6 +266,10 @@ static void lcm_init(void)
 
 static void lcm_suspend(void)
 {
+    nkro_log_toggle();
+    NKRO_LOG("lcm_suspend\n");
+    NKRO_DUMP();
+    nkro_log_toggle();
 	push_table(NULL, lcm_suspend_setting, sizeof(lcm_suspend_setting) / sizeof(struct LCM_setting_table), 1);
 }
 
@@ -295,6 +317,10 @@ static unsigned int lcm_compare_id(void)
 
 static void lcm_setbacklight_cmdq(void *handle, unsigned int level)
 {
+    nkro_log_toggle();
+    NKRO_LOG("lcm_setbacklight_cmdq handle=%p level=%d", handle, level);
+    NKRO_DUMP();
+    nkro_log_toggle();
 	pr_debug("[%s] ebbg_ili9881c backlight level: %d\n", __func__, level);
 
 	// from 12 bits to 8 bits
