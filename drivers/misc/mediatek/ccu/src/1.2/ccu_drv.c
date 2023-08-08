@@ -125,6 +125,8 @@ static int ccu_suspend(struct platform_device *dev, pm_message_t mesg);
 
 static int ccu_resume(struct platform_device *dev);
 
+static int32_t _clk_count;
+
 /*---------------------------------------------------------------------------*/
 /* CCU Driver: pm operations                                                 */
 /*---------------------------------------------------------------------------*/
@@ -420,15 +422,18 @@ static int ccu_open(struct inode *inode, struct file *flip)
 	int ret = 0;
 	struct ccu_user_s *user;
 
+	_clk_count = 0;
+
 	LOG_INF_MUST("%s +", __func__);
 	user = NULL;
 	ccu_create_user(&user);
-	flip->private_data = user;
 
 	if (IS_ERR_OR_NULL(user)) {
 		LOG_ERR("fail to create user\n");
 		return -ENOMEM;
 	}
+
+	flip->private_data = user;
 
 	LOG_INF_MUST("%s -", __func__);
 	return ret;
@@ -562,8 +567,10 @@ int ccu_clock_enable(void)
 {
 	int ret;
 
-	LOG_DBG_MUST("%s.\n", __func__);
+	LOG_DBG_MUST("%s %d.\n", __func__, _clk_count);
+	mutex_lock(&g_ccu_device->clk_mutex);
 
+	_clk_count++;
 	ret = clk_prepare_enable(ccu_clk_pwr_ctrl[0]);
 	if (ret)
 		LOG_ERR("CAM_PWR enable fail.\n");
@@ -571,14 +578,21 @@ int ccu_clock_enable(void)
 	if (ret)
 		LOG_ERR("CCU_CLK_CAM_CCU enable fail.\n");
 
+	mutex_unlock(&g_ccu_device->clk_mutex);
+
 	return ret;
 }
 
 void ccu_clock_disable(void)
 {
-	LOG_DBG_MUST("%s.\n", __func__);
-	clk_disable_unprepare(ccu_clk_pwr_ctrl[1]);
-	clk_disable_unprepare(ccu_clk_pwr_ctrl[0]);
+	LOG_DBG_MUST("%s %d.\n", __func__, _clk_count);
+	mutex_lock(&g_ccu_device->clk_mutex);
+	if (_clk_count > 0) {
+		clk_disable_unprepare(ccu_clk_pwr_ctrl[1]);
+		clk_disable_unprepare(ccu_clk_pwr_ctrl[0]);
+		_clk_count--;
+	}
+	mutex_unlock(&g_ccu_device->clk_mutex);
 }
 
 static MBOOL _is_fast_cmd(enum ccu_msg_id msg_id)
@@ -1167,7 +1181,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = ccu_hw_base;
 			phy_size = 0x1000;
 			g_ccu_device->ccu_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("ccu_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("ccu_base va: 0x%lx\n",
@@ -1177,7 +1191,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = CCU_DMEM_BASE;
 			phy_size = CCU_DMEM_SIZE;
 			g_ccu_device->dmem_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("dmem_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("dmem_base va: 0x%lx\n",
@@ -1187,7 +1201,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = CCU_CAMSYS_BASE;
 			phy_size = CCU_CAMSYS_SIZE;
 			g_ccu_device->camsys_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("camsys_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("camsys_base va: 0x%lx\n",
@@ -1197,7 +1211,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = CCU_N3D_A_BASE;
 			phy_size = CCU_N3D_A_SIZE;
 			g_ccu_device->n3d_a_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("n3d_a_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("n3d_a_base va: 0x%lx\n",
@@ -1375,6 +1389,7 @@ static int __init CCU_INIT(void)
 
 	INIT_LIST_HEAD(&g_ccu_device->user_list);
 	mutex_init(&g_ccu_device->user_mutex);
+	mutex_init(&g_ccu_device->clk_mutex);
 	init_waitqueue_head(&g_ccu_device->cmd_wait);
 
 	/* Register M4U callback */
