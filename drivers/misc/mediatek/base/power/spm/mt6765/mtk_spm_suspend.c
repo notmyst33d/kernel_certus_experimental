@@ -11,6 +11,8 @@
  * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
  */
 
+#include <linux/nkro.h>
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -334,6 +336,7 @@ unsigned int spm_go_to_sleep(void)
 	u32 spm_flags = suspend_pcm_flags;
 	u32 spm_flags1 = suspend_pcm_flags1;
 
+    NKRO_DUMP();
     return 0;
 
 	spm_suspend_footprint(SPM_SUSPEND_ENTER);

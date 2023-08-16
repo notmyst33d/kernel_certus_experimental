@@ -11,6 +11,8 @@
  * See http://www.gnu.org/licenses/gpl-2.0.html for more details.
  */
 
+#include <linux/nkro.h>
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -351,6 +353,8 @@ static ssize_t suspend_state_read(char *ToUserBuf, size_t sz, void *priv)
 	char *p = ToUserBuf;
 	int i;
 
+    NKRO_DUMP();
+
 	if (!ToUserBuf)
 		return -EINVAL;
 	#undef log
@@ -374,6 +378,8 @@ static ssize_t suspend_state_write(char *FromUserBuf, size_t sz, void *priv)
 {
 	char cmd[128];
 	int param;
+
+    NKRO_DUMP();
 
 	if (!FromUserBuf)
 		return -EINVAL;
