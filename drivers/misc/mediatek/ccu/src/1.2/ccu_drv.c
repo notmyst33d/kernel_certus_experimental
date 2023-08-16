@@ -1167,7 +1167,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = ccu_hw_base;
 			phy_size = 0x1000;
 			g_ccu_device->ccu_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("ccu_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("ccu_base va: 0x%lx\n",
@@ -1177,7 +1177,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = CCU_DMEM_BASE;
 			phy_size = CCU_DMEM_SIZE;
 			g_ccu_device->dmem_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("dmem_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("dmem_base va: 0x%lx\n",
@@ -1187,7 +1187,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = CCU_CAMSYS_BASE;
 			phy_size = CCU_CAMSYS_SIZE;
 			g_ccu_device->camsys_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("camsys_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("camsys_base va: 0x%lx\n",
@@ -1197,7 +1197,7 @@ static int ccu_probe(struct platform_device *pdev)
 			phy_addr = CCU_N3D_A_BASE;
 			phy_size = CCU_N3D_A_SIZE;
 			g_ccu_device->n3d_a_base =
-				(unsigned long)ioremap(phy_addr, phy_size);
+				(unsigned long)ioremap_wc(phy_addr, phy_size);
 			LOG_INF("n3d_a_base pa: 0x%x, size: 0x%x\n",
 				phy_addr, phy_size);
 			LOG_INF("n3d_a_base va: 0x%lx\n",
