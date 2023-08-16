@@ -334,6 +334,8 @@ unsigned int spm_go_to_sleep(void)
 	u32 spm_flags = suspend_pcm_flags;
 	u32 spm_flags1 = suspend_pcm_flags1;
 
+    return 0;
+
 	spm_suspend_footprint(SPM_SUSPEND_ENTER);
 
 #if !defined(CONFIG_FPGA_EARLY_PORTING)
